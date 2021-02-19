@@ -35,6 +35,12 @@ end
 centrifuge.init = function(opts)
     if not opts then opts = {} end
 
+    rawset(_G, 'centrifuge', centrifuge)
+
+    if not opts.is_master then
+        return
+    end
+
     --log.info("Centrifuge init with opts: %s", json.encode(opts))
 
     local pubs_temporary = false --opts.pubs_temporary or false
@@ -121,7 +127,6 @@ centrifuge.init = function(opts)
     --box.session.on_connect()
     box.session.on_disconnect(on_disconnect)
 
-    rawset(_G, 'centrifuge', centrifuge)
 end
 
 centrifuge.id_to_channels = {}
