@@ -295,7 +295,7 @@ function centrifuge.add_presence(channel, ttl, client_id, user_id, conn_info, ch
     if not conn_info then conn_info = "" end
     if not chan_info then chan_info = "" end
     local exp = clock.realtime() + ttl
-    return box.space.presence:put({channel, client_id, user_id, conn_info, chan_info, exp})
+    box.space.presence:put({channel, client_id, user_id, conn_info, chan_info, exp})
 end
 
 function centrifuge.remove_presence(channel, client_id)
