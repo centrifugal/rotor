@@ -270,7 +270,7 @@ function centrifuge.history(channel, since_offset, limit, include_pubs, meta_ttl
         return stream_meta[2], stream_meta[3], nil
     end
     if stream_meta[2] == since_offset - 1 then
-        box.commit()
+        box.commit() -- wal log return err
         return stream_meta[2], stream_meta[3], nil
     end
     local num_entries = 0
@@ -295,7 +295,7 @@ function centrifuge.add_presence(channel, ttl, client_id, user_id, conn_info, ch
     if not conn_info then conn_info = "" end
     if not chan_info then chan_info = "" end
     local exp = clock.realtime() + ttl
-    box.space.presence:put({channel, client_id, user_id, conn_info, chan_info, exp})
+    return box.space.presence:put({channel, client_id, user_id, conn_info, chan_info, exp})
 end
 
 function centrifuge.remove_presence(channel, client_id)
