@@ -11,7 +11,7 @@ g.before_all(function()
 
         local cluster = helpers.Cluster:new({
                 datadir = tempdir,
-                server_command = 'init.lua',
+                server_command = 'init_cartridge.lua',
                 use_vshard = false,
                 replicasets = {{
                         roles = {'centrifuge'},
