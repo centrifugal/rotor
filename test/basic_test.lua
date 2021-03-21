@@ -35,7 +35,7 @@ g.after_all(function()
         g.cluster:stop()
 end)
 
-function g.test_starwars_storage()
+function g.test_centrifuge()
     local cluster = g.cluster
     local server = cluster:server('storage1')
 
@@ -45,4 +45,16 @@ function g.test_starwars_storage()
     t.assert_equals(err, nil, err)
     local rc, err = server.net_box:call('centrifuge.presence', {'hellochannel'})
     t.assert_equals(err, nil, err)
+
+    -- TODO
+    -- subscribe
+    -- unsubscribe
+    -- publish
+    -- add presence
+    -- get presence
+    -- get presence
+    -- remove presense
+
+    -- history
+    -- remove history
 end
