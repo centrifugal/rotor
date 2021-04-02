@@ -102,8 +102,6 @@ function g.test_centrifuge()
     local rc, err = server.net_box:call('centrifuge.remove_presence', {'hellochannel', 'client id'})
     t.assert_equals(rc, nil, rc)
     t.assert_equals(err, nil, err)
-
-    
     
     -- history
     -- remove history

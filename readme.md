@@ -167,3 +167,51 @@ tarantoolctl rocks install luatest
 ``` bash
 .rocks/bin/luatest
 ```
+
+# Deploy
+## Packing
+
+```
+sudo yum install tarantool tarantool-devel cartridge-cli
+sudo yum install gcc gcc-c++ cmake unzip zip
+```
+
+```
+cartridge build
+```
+
+```
+cartridge pack rpm --unit-template tarantool-engine.service --instantiated-unit-template tarantool-engine@.service # --version 0.1.0
+```
+
+## Install
+
+```
+sudo yum install tarantool-engine-$RELEASE.rpm
+```
+
+## Configuring
+
+- `/etc/tarantool/conf.d/tarantool-engine.yml`
+  ```
+  tarantool_engine.x:
+    http_port: 8081
+    advertise_uri: 127.0.0.1:3301
+
+  tarantool_engine.y:
+    http_port: 8082
+    advertise_uri: 127.0.0.1:3302
+  ```
+
+## Start
+
+```
+sudo systemctl start tarantool_engine@x
+```
+
+```
+sudo systemctl start tarantool_engine@y
+```
+
+- Goto web admin
+- Configure topology you want
