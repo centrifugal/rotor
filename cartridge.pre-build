@@ -1,0 +1,5 @@
+#!/bin/sh
+
+rm -rf one
+
+tarantoolctl rocks install https://raw.githubusercontent.com/moonlibs/indexpiration/master/rockspecs/indexpiration-scm-1.rockspec

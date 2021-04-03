@@ -194,11 +194,11 @@ sudo yum install tarantool-engine-$RELEASE.rpm
 
 - `/etc/tarantool/conf.d/tarantool-engine.yml`
   ```
-  tarantool_engine.x:
+  tarantool-engine.x:
     http_port: 8081
     advertise_uri: 127.0.0.1:3301
 
-  tarantool_engine.y:
+  tarantool-engine.y:
     http_port: 8082
     advertise_uri: 127.0.0.1:3302
   ```
@@ -206,11 +206,11 @@ sudo yum install tarantool-engine-$RELEASE.rpm
 ## Start
 
 ```
-sudo systemctl start tarantool_engine@x
+sudo systemctl start tarantool-engine@x
 ```
 
 ```
-sudo systemctl start tarantool_engine@y
+sudo systemctl start tarantool-engine@y
 ```
 
 - Goto web admin

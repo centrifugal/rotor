@@ -1,0 +1,34 @@
+[Unit]
+Description=Tarantool Cartridge Centrifual tarantool-engine@%i
+After=network.target
+
+[Service]
+Type=simple
+ExecStartPre=/bin/sh -c 'mkdir -p /var/lib/tarantool/tarantool-engine.%i'
+ExecStart=/usr/bin/tarantool /usr/share/tarantool/tarantool-engine/init_cartridge.lua
+Restart=on-failure
+RestartSec=2
+User=tarantool
+Group=tarantool
+
+Environment=TARANTOOL_APP_NAME=tarantool-engine
+Environment=TARANTOOL_WORKDIR=/var/lib/tarantool/tarantool-engine.%i
+Environment=TARANTOOL_CFG=/etc/tarantool/conf.d
+Environment=TARANTOOL_PID_FILE=/var/run/tarantool/tarantool-engine.%i.pid
+Environment=TARANTOOL_CONSOLE_SOCK=/var/run/tarantool/tarantool-engine.%i.control
+Environment=TARANTOOL_INSTANCE_NAME=%i
+
+LimitCORE=infinity
+# Disable OOM killer
+OOMScoreAdjust=-1000
+# Increase fd limit for Vinyl
+LimitNOFILE=65535
+
+# Systemd waits until all xlogs are recovered
+TimeoutStartSec=86400s
+# Give a reasonable amount of time to close xlogs
+TimeoutStopSec=10s
+
+[Install]
+WantedBy=multi-user.target
+Alias=tarantool-engine.%i
