@@ -181,24 +181,24 @@ cartridge build
 ```
 
 ```
-cartridge pack rpm --unit-template tarantool-engine.service --instantiated-unit-template tarantool-engine@.service # --version 0.1.0
+cartridge pack rpm --unit-template centrifuge-tarantool-engine.service --instantiated-unit-template centrifuge-tarantool-engine@.service # --version 0.1.0
 ```
 
 ## Install
 
 ```
-sudo yum install tarantool-engine-$RELEASE.rpm
+sudo yum install centrifuge-tarantool-engine-$RELEASE.rpm
 ```
 
 ## Configuring
 
-- `/etc/tarantool/conf.d/tarantool-engine.yml`
+- `/etc/tarantool/conf.d/centrifuge-tarantool-engine.yml`
   ```
-  tarantool-engine.x:
+  centrifuge-tarantool-engine.x:
     http_port: 8081
     advertise_uri: 127.0.0.1:3301
 
-  tarantool-engine.y:
+  centrifuge-tarantool-engine.y:
     http_port: 8082
     advertise_uri: 127.0.0.1:3302
   ```
@@ -206,11 +206,11 @@ sudo yum install tarantool-engine-$RELEASE.rpm
 ## Start
 
 ```
-sudo systemctl start tarantool-engine@x
+sudo systemctl start centrifuge-tarantool-engine@x
 ```
 
 ```
-sudo systemctl start tarantool-engine@y
+sudo systemctl start centrifuge-tarantool-engine@y
 ```
 
 - Goto web admin

@@ -1,4 +1,4 @@
-package = "tarantool-engine"
+package = "centrifuge-tarantool-engine"
 version = "scm-1"
 source = {
    url = "https://github.com/centrifugal/tarantool-engine"
