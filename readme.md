@@ -1,6 +1,6 @@
-# Start developer backend
+# Tarantool engine for Centrifuge/Centrifugo
 
-This is a work in progress to integrate Centrifuge/Centrifugo stack with [Tarantool](https://www.tarantool.io/en/) database/platform. The integration should provide efficient PUB/SUB, ephemeral streams and channel presence functionality.
+This is a work in progress to integrate Centrifuge/Centrifugo stack with [Tarantool](https://www.tarantool.io/en/) database/platform. The integration should provide an efficient PUB/SUB, ephemeral streams and channel presence functionality.
 
 Prerequisites: Go language and Tarantool should be installed. 
 
