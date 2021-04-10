@@ -6,7 +6,6 @@ on:
 
 jobs:
   run-tests-ce:
-    if: github.ref == 'refs/heads/main'
     runs-on: [ubuntu-latest]
     steps:
       - uses: actions/checkout@master
@@ -16,7 +15,10 @@ jobs:
           curl -L https://tarantool.io/installer.sh | sudo VER=2.6 bash
           sudo apt install -y tarantool-dev cartridge-cli
           
-      - name: Install requirements for community
+      - name: Pack rpm
         run: |
           cartridge pack rpm
 
+      - name: Pack deb
+        run: |
+          cartridge pack deb
