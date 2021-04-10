@@ -2,10 +2,7 @@ name: Release
 
 on:
   push:
-    branches:
-      - master
-    tags:
-      - '*'
+  pull_request:
 
 jobs:
   run-tests-ce:
