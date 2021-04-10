@@ -8,6 +8,12 @@ description = {
    detailed = "This is a work in progress to integrate Centrifuge/Centrifugo stack with [Tarantool](https://www.tarantool.io/en/) database/platform. The integration should provide efficient PUB/SUB, ephemeral streams and channel presence functionality.",
    license = "MIT"
 }
+
+dependencies = {
+   'tarantool',
+   'cartridge == 2.5.1'
+}
+
 build = {
    type = "builtin",
    modules = {
