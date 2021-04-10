@@ -17,8 +17,8 @@ jobs:
           
       - name: Pack rpm
         run: |
-          cartridge pack rpm
+          cartridge pack rpm --version 0.0.1
 
       - name: Pack deb
         run: |
-          cartridge pack deb
+          cartridge pack deb --version 0.0.1
