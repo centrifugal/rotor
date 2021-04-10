@@ -29,4 +29,4 @@ jobs:
         run: sudo kill -9 $(sudo lsof -t -i tcp:8084) || true
 
       - name: Run tests
-        run: .rocks/bin/luatest -v
+        run: .rocks/bin/luatest -v -c
