@@ -20,7 +20,6 @@ local _, err = cartridge.cfg({
         workdir = 'one', -- default
 
         roles = {
-            --<<< Добавляем роль - указываем путь к модулю
             'centrifuge',
         },
 })
