@@ -2,8 +2,8 @@
 
 local log = require('log')
 --[[
-    Устаналвиваем текущую директорию,
-    как начальный путь загрузки всех модулей
+    Set current dir as a starting
+    path for module loading.
 --]]
 package.setsearchroot()
 
