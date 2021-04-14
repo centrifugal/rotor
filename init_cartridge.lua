@@ -4,8 +4,8 @@ local log = require('log')
 
 
 --[[
-    Устаналвиваем текущую директорию,
-    как начальный путь загрузки всех модулей
+    Set current dir as a starting
+    path for module loading.
 --]]
 package.setsearchroot()
 
@@ -14,10 +14,7 @@ local argparse = require('cartridge.argparse')
 local membership = require('membership')
 
 --[[
-    Конфигурируем и запускаем cartridge на узле
-    Указываем какие роли мы будем использовать в кластере
-    Указываем рабочую директорию для хранения снапов, икслогов
-    и конфигурации приложения `one`
+    Configure and run Cartridge on node.
 ]]
 local _, err = cartridge.cfg({
         workdir = 'one', -- default
