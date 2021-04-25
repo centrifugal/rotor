@@ -152,7 +152,7 @@ function centrifuge.get_messages(id, use_polling, timeout)
             else
                 local ok = box.session.push(messages)
                 if ok ~= true then
-                    error("write error")
+                    error("Write error")
                 end
             end
         else
@@ -231,7 +231,9 @@ function centrifuge._publish(msg_type, channel, data, info, ttl, size, meta_ttl)
             epoch = tostring(now)
             offset = 1
         end
-        box.space.meta:upsert({channel, offset, epoch, meta_exp}, {{'=', 'channel', channel}, {'+', 'offset', 1}, {'=', 'exp', meta_exp}})
+        -- Need to use field numbers to work with Tarantool 1.10, otherwise we could write:
+        -- box.space.meta:upsert({channel, offset, epoch, meta_exp}, {{'=', 'channel', channel}, {'+', 'offset', 1}, {'=', 'exp', meta_exp}})
+        box.space.meta:upsert({channel, offset, epoch, meta_exp}, {{'=', 1, channel}, {'+', 2, 1}, {'=', 4, meta_exp}})
         box.space.pubs:auto_increment{channel, offset, clock.realtime() + tonumber(ttl), data, info}
         local max_offset_to_keep = offset - size
         if max_offset_to_keep > 0 then
@@ -256,11 +258,10 @@ function centrifuge.publish(msg_type, channel, data, info, ttl, size, meta_ttl)
     box.begin()
     local rc, res = pcall(centrifuge._publish, msg_type, channel, data, info, ttl, size, meta_ttl)
     if not rc then
-        log.warn("Publish error %q %q %q %q %q %q %q", msg_type, channel, data, info, ttl, size, meta_ttl)
+        log.warn("Publish error: %q %q %q %q %q %q %q", msg_type, channel, data, info, ttl, size, meta_ttl)
         box.rollback()
-        error("Publish unsuccess " .. tostring(res))
+        error("Publish error: " .. tostring(res))
     end
-
     box.commit()
     return res.offset, res.epoch
 end
@@ -274,8 +275,9 @@ function centrifuge._history(channel, since_offset, limit, include_pubs, meta_tt
         meta_exp = now + meta_ttl
     end
     local epoch = tostring(now)
-
-    box.space.meta:upsert({channel, 0, epoch, meta_exp}, {{'=', 'channel', channel}, {'=', 'exp', meta_exp}})
+    -- Need to use field numbers to work with Tarantool 1.10, otherwise we could write:
+    -- box.space.meta:upsert({channel, 0, epoch, meta_exp}, {{'=', 'channel', channel}, {'=', 'exp', meta_exp}})
+    box.space.meta:upsert({channel, 0, epoch, meta_exp}, {{'=', 1, channel}, {'=', 4, meta_exp}})
     local stream_meta = box.space.meta:get(channel)
 
     if not include_pubs then
@@ -302,7 +304,7 @@ function centrifuge.history(channel, since_offset, limit, include_pubs, meta_ttl
     if not rc then
         log.warn("History error %q %q %q %q %q", channel, since_offset, limit, include_pubs, meta_ttl)
         box.rollback()
-        error("History unsuccess " .. tostring(res))
+        error("History error: " .. tostring(res))
     end
 
     box.commit()
