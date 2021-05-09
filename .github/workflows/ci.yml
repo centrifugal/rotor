@@ -1,0 +1,122 @@
+name: Release
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name != github.repository
+    strategy:
+      matrix:
+        tarantool-version: ["1.10", "2.6", "2.7"]
+      fail-fast: false
+    runs-on: [ubuntu-latest]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install requirements for community
+        run: |
+          curl -L https://tarantool.io/installer.sh | sudo VER=${{ matrix.tarantool-version }} bash
+          sudo apt install -y tarantool-dev cartridge-cli
+          cartridge build
+          tarantoolctl rocks install luatest
+
+      # This server starts and listen on 8084 port that is used for tests
+      - name: Stop Mono server
+        run: sudo kill -9 $(sudo lsof -t -i tcp:8084) || true
+
+      - name: Run tests
+        run: .rocks/bin/luatest -v -c
+
+  build:
+    if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name != github.repository
+    runs-on: [ubuntu-latest]
+    strategy:
+      matrix:
+        tarantool-version: ["2.6", "2.7"]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install requirements
+        run: |
+          curl -L https://tarantool.io/installer.sh | sudo VER=${{ matrix.tarantool-version }} bash
+          sudo apt install -y tarantool-dev cartridge-cli
+
+      - name: Pack rpm
+        run: |
+          cartridge pack rpm --version ${{ github.event.release.tag_name }} --suffix tnt${{ matrix.tarantool-version }}
+
+      - name: Pack deb
+        run: |
+          cartridge pack deb --version ${{ github.event.release.tag_name }} --suffix tnt${{ matrix.tarantool-version }}
+
+      - name: ls
+        run: |
+          ls
+
+  create_release:
+    if: contains(github.ref, 'tags/')
+    needs: [test, build]
+    name: Create release
+    runs-on: ubuntu-latest
+    outputs:
+      upload_url: ${{ steps.create_release.outputs.upload_url }}    
+    steps:
+      - name: Make release
+        uses: softprops/action-gh-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          name: Release ${{ github.ref }}
+          draft: true
+
+  publish_assets:
+    if: contains(github.ref, 'tags/')
+    needs: create_release
+    runs-on: [ubuntu-latest]
+    strategy:
+      matrix:
+        tarantool-version: ["2.6", "2.7"]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install requirements
+        run: |
+          curl -L https://tarantool.io/installer.sh | sudo VER=${{ matrix.tarantool-version }} bash
+          sudo apt install -y tarantool-dev cartridge-cli
+
+      - name: Pack rpm
+        run: |
+          cartridge pack rpm --version ${{ github.event.release.tag_name }} --suffix tnt${{ matrix.tarantool-version }}
+
+      - name: Pack deb
+        run: |
+          cartridge pack deb --version ${{ github.event.release.tag_name }} --suffix tnt${{ matrix.tarantool-version }}
+
+      - name: ls
+        run: |
+          ls
+
+      - name: Upload deb
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.create_release.outputs.upload_url }}
+          asset_path: centrifuge-tarantool-engine-${{ github.event.release.tag_name }}-0-tnt${{ matrix.tarantool-version }}.deb
+          asset_name: centrifuge-tarantool-engine-tnt${{ matrix.tarantool-version }}-${{ github.event.release.tag_name }}-0.deb
+          asset_content_type: application/octet-stream
+
+      - name: Upload rpm
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.create_release.outputs.upload_url }}
+          asset_path: centrifuge-tarantool-engine-${{ github.event.release.tag_name }}-0-tnt${{ matrix.tarantool-version }}.rpm
+          asset_name: centrifuge-tarantool-engine-tnt${{ matrix.tarantool-version }}-${{ github.event.release.tag_name }}-0.rpm
+          asset_content_type: application/octet-stream
