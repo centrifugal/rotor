@@ -45,13 +45,13 @@ jobs:
           curl -L https://tarantool.io/installer.sh | sudo VER=${{ matrix.tarantool-version }} bash
           sudo apt install -y tarantool-dev cartridge-cli
 
-      - name: Pack rpm
+      - name: Test pack rpm (using fake version)
         run: |
-          cartridge pack rpm --version ${{ github.event.release.tag_name }} --suffix tnt${{ matrix.tarantool-version }}
+          cartridge pack rpm --version 0.0.1
 
-      - name: Pack deb
+      - name: Test pack deb (using fake version)
         run: |
-          cartridge pack deb --version ${{ github.event.release.tag_name }} --suffix tnt${{ matrix.tarantool-version }}
+          cartridge pack deb --version 0.0.1
 
       - name: ls
         run: |
@@ -91,11 +91,11 @@ jobs:
 
       - name: Pack rpm
         run: |
-          cartridge pack rpm --version ${{ github.event.release.tag_name }} --suffix tnt${{ matrix.tarantool-version }}
+          cartridge pack rpm --version ${{ github.event.release.tag_name }}
 
       - name: Pack deb
         run: |
-          cartridge pack deb --version ${{ github.event.release.tag_name }} --suffix tnt${{ matrix.tarantool-version }}
+          cartridge pack deb --version ${{ github.event.release.tag_name }}
 
       - name: ls
         run: |
@@ -107,7 +107,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ needs.create_release.outputs.upload_url }}
-          asset_path: centrifuge-tarantool-engine-${{ github.event.release.tag_name }}-0-tnt${{ matrix.tarantool-version }}.deb
+          asset_path: centrifuge-tarantool-engine-${{ github.event.release.tag_name }}-0.deb
           asset_name: centrifuge-tarantool-engine-tnt${{ matrix.tarantool-version }}-${{ github.event.release.tag_name }}-0.deb
           asset_content_type: application/octet-stream
 
