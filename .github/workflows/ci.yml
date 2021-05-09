@@ -65,12 +65,14 @@ jobs:
     outputs:
       upload_url: ${{ steps.create_release.outputs.upload_url }}    
     steps:
+      - name: Set env
+        run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV    
       - name: Make release
         uses: softprops/action-gh-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          name: Release ${{ github.ref }}
+          name: Release ${{ env.RELEASE_VERSION }}
           draft: true
 
   publish_assets:
@@ -84,6 +86,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      - name: Set env
+        run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV    
+
       - name: Install requirements
         run: |
           curl -L https://tarantool.io/installer.sh | sudo VER=${{ matrix.tarantool-version }} bash
@@ -91,11 +96,11 @@ jobs:
 
       - name: Pack rpm
         run: |
-          cartridge pack rpm --version ${{ github.event.release.tag_name }}
+          cartridge pack rpm --version ${{ env.RELEASE_VERSION }}
 
       - name: Pack deb
         run: |
-          cartridge pack deb --version ${{ github.event.release.tag_name }}
+          cartridge pack deb --version ${{ env.RELEASE_VERSION }}
 
       - name: ls
         run: |
@@ -107,8 +112,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ needs.create_release.outputs.upload_url }}
-          asset_path: centrifuge-tarantool-engine-${{ github.event.release.tag_name }}-0.deb
-          asset_name: centrifuge-tarantool-engine-tnt${{ matrix.tarantool-version }}-${{ github.event.release.tag_name }}-0.deb
+          asset_path: centrifuge-tarantool-engine-${{ env.RELEASE_VERSION }}-0.deb
+          asset_name: centrifuge-tarantool-engine-tnt${{ matrix.tarantool-version }}-${{ env.RELEASE_VERSION }}-0.deb
           asset_content_type: application/octet-stream
 
       - name: Upload rpm
@@ -117,6 +122,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ needs.create_release.outputs.upload_url }}
-          asset_path: centrifuge-tarantool-engine-${{ github.event.release.tag_name }}-0.rpm
-          asset_name: centrifuge-tarantool-engine-tnt${{ matrix.tarantool-version }}-${{ github.event.release.tag_name }}-0.rpm
+          asset_path: centrifuge-tarantool-engine-${{ env.RELEASE_VERSION }}-0.rpm
+          asset_name: centrifuge-tarantool-engine-tnt${{ matrix.tarantool-version }}-${{ env.RELEASE_VERSION }}-0.rpm
           asset_content_type: application/octet-stream
