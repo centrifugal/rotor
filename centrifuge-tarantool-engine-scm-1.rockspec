@@ -11,7 +11,7 @@ description = {
 
 dependencies = {
    'tarantool',
-   'cartridge == 2.5.1'
+   'cartridge == 2.6.0'
 }
 
 build = {

@@ -8,9 +8,10 @@ jobs:
   run-tests-ce:
     runs-on: [ubuntu-latest]
     steps:
-      - uses: actions/checkout@master
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-      - name: Install requirements for community
+      - name: Install requirements
         run: |
           curl -L https://tarantool.io/installer.sh | sudo VER=2.6 bash
           sudo apt install -y tarantool-dev cartridge-cli
@@ -22,3 +23,7 @@ jobs:
       - name: Pack deb
         run: |
           cartridge pack deb --version 0.0.1
+
+      - name: ls
+        run: |
+          ls

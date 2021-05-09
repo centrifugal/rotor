@@ -7,7 +7,7 @@ Prerequisites: Go language and Tarantool should be installed.
 Also install dependencies:
 
 ``` bash
-tarantoolctl rocks install cartridge 2.5.0
+tarantoolctl rocks install cartridge 2.6.0
 tarantoolctl rocks install https://raw.githubusercontent.com/moonlibs/indexpiration/master/rockspecs/indexpiration-scm-1.rockspec
 ```
 

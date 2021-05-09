@@ -33,7 +33,7 @@ local instance_id = string.match(arg[1], '^%d+$')
 assert(instance_id, 'malformed instance id')
 
 local port = 3300 + instance_id
-local workdir = 'tnt'..instance_id
+local workdir = 'workdir_tnt_standalone_'..instance_id
 
 local fio = require('fio')
 fio.mkdir(workdir)

@@ -1,3 +1,4 @@
 .rocks
 *.xlog
 *.snap
+workdir_tnt_*

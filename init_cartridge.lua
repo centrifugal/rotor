@@ -34,7 +34,7 @@ local membership = require('membership')
     Configure and run Cartridge on node.
 ]]
 local _, err = cartridge.cfg({
-        workdir = 'one', -- default
+        workdir = 'workdir_tnt_cartridge_1', -- default
 
         roles = {
             'centrifuge',
