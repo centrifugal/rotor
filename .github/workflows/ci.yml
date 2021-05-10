@@ -53,10 +53,6 @@ jobs:
         run: |
           cartridge pack deb --version 0.0.1
 
-      - name: ls
-        run: |
-          ls
-
   create_release:
     if: contains(github.ref, 'tags/')
     needs: [test, test_pack]
@@ -105,10 +101,6 @@ jobs:
       - name: Pack deb
         run: |
           cartridge pack deb --version ${{ env.RELEASE_VERSION }}
-
-      - name: ls
-        run: |
-          ls
 
       - name: Upload deb
         uses: actions/upload-release-asset@v1
