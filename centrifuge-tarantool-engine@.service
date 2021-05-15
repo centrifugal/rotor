@@ -5,7 +5,7 @@ After=network.target
 [Service]
 Type=simple
 ExecStartPre=/bin/sh -c 'mkdir -p /var/lib/tarantool/tarantool-engine.%i'
-ExecStart=/usr/bin/tarantool /usr/share/tarantool/tarantool-engine/init_cartridge.lua
+ExecStart=/usr/bin/tarantool /usr/share/tarantool/tarantool-engine/init.lua
 Restart=on-failure
 RestartSec=2
 User=tarantool

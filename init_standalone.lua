@@ -25,47 +25,32 @@ else
     package.cpath = app_dir .. '/.rocks/lib/tarantool/?.dylib;' .. package.cpath
 end
 
+require 'strict'.on()
 local log = require('log')
-local cartridge = require('cartridge')
-local argparse = require('cartridge.argparse')
-local membership = require('membership')
+fiber = require 'fiber'
 
---[[
-    Configure and run Cartridge on node.
-]]
-local _, err = cartridge.cfg({
-        workdir = 'workdir_tnt_cartridge_1', -- default
+local address = os.getenv("TARANTOOL_ADDRESS") or '0.0.0.0'
+local port = os.getenv("TARANTOOL_PORT") or 3301
+local workdir = os.getenv("TARANTOOL_WORKDIR") or "tmp/standalone_"..port
 
-        roles = {
-            'centrifuge',
-        },
-})
-if err ~= nil then
-    log.info(err)
-    os.exit(1)
-end
+local fio = require('fio')
+fio.mkdir(workdir)
 
-local opts, err = argparse.get_opts({
-        bootstrap = 'boolean'})
+box.cfg{
+    listen = address..':'..port,
+    wal_mode = 'none',
+    wal_dir = workdir, -- though WAL used here by default, see above
+    memtx_dir = workdir,
+    readahead = 10 * 1024 * 1024, -- to keep up with benchmark load
+    net_msg_max = 1024, -- to keep up with benchmark load
+}
+box.schema.user.grant('guest', 'super', nil, nil, { if_not_exists = true })
 
-if err ~= nil then
-    log.error('%s', tostring(err))
-    os.exit(1)
-end
+local centrifuge = require 'centrifuge'
 
-if opts.bootstrap then
-    log.info('Bootstrapping in %s', workdir)
-    require("membership.options").ACK_TIMEOUT_SECONDS = 0.5
-    local all = {
-        ['centrifuge'] = true,
-    }
+centrifuge.init({is_master=true})
 
-    local _, err = cartridge.admin_join_server({
-            uri = membership.myself().uri,
-            roles = all,
-    })
-
-    if err ~= nil then
-        log.warn('%s', tostring(err))
-    end
+if not fiber.self().storage.console then
+    require'console'.start()
+    os.exit()
 end
