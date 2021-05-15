@@ -19,6 +19,6 @@ build = {
    modules = {
       centrifuge = "centrifuge.lua",
       init = "init.lua",
-      init_cartridge = "init_cartridge.lua",
+      init_standalone = "init_standalone.lua",
    }
 }

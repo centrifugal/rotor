@@ -20,7 +20,7 @@ This section describes topologies available with pure Tarantool (i.e. no Cartrid
 Run single Tarantool instance (`127.0.0.1:3301`):
 
 ``` bash
-tarantool init.lua 1
+tarantool init_standalone.lua
 ```
 
 ### High Availability
@@ -32,23 +32,23 @@ Not available with pure Tarantool yet - see Cartridge section.
 First shard (`127.0.0.1:3301`):
 
 ``` bash
-tarantool init.lua 1
+TARANTOOL_PORT=3301 tarantool init_standalone.lua
 ```
 
 Second shard (`127.0.0.1:3302`):
 
 ``` bash
-tarantool init.lua 2
+TARANTOOL_PORT=3302 tarantool init_standalone.lua
 ```
 
 ## Cartridge
 
-This section describes topologies available with Tarantool Cartridge. Use `init_cartridge.lua` as starting point.
+This section describes topologies available with Tarantool Cartridge. Use `init.lua` as starting point.
 
 ### Single node
 
 ``` bash
-tarantool init_cartridge.lua --bootstrap true
+tarantool init.lua --bootstrap true
 ```
 
 `--bootstrap true` automatically assigns Centrifuge role for node on `127.0.0.1:3301`
@@ -60,13 +60,13 @@ Create a couple of Tarantool instances managed by Cartridge:
 First instance on `127.0.0.1:3301`:
 
 ```bash
-tarantool init_cartridge.lua --advertise-uri 127.0.0.1:3301 --workdir one
+tarantool init.lua --advertise-uri 127.0.0.1:3301 --workdir one
 ```
 
 Second instance on `127.0.0.1:3302`:
 
 ```bash
-tarantool init_cartridge.lua --advertise-uri 127.0.0.1:3302 --http-enabled false --workdir two
+tarantool init.lua --advertise-uri 127.0.0.1:3302 --http-enabled false --workdir two
 ```
 
 Now let's look at available Tarantool topologies in Cartridge cluster.
