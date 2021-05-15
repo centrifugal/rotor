@@ -29,20 +29,9 @@ require 'strict'.on()
 local log = require('log')
 fiber = require 'fiber'
 
-local address = os.getenv("TARANTOOL_ADDRESS")
-if address == nil then
-    address = '0.0.0.0'
-end
-
-local port = os.getenv("TARANTOOL_PORT")
-if port == nil then
-    port = 3301
-end
-
-local workdir = os.getenv("TARANTOOL_WORKDIR")
-if workdir == nil then
-    workdir = "tmp/standalone_"..port
-end
+local address = os.getenv("TARANTOOL_ADDRESS") or '0.0.0.0'
+local port = os.getenv("TARANTOOL_PORT") or 3301
+local workdir = os.getenv("TARANTOOL_WORKDIR") or "tmp/standalone_"..port
 
 local fio = require('fio')
 fio.mkdir(workdir)
