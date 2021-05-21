@@ -39,10 +39,10 @@ fio.mkdir(workdir)
 box.cfg{
     listen = address..':'..port,
     wal_mode = 'none',
-    wal_dir = workdir, -- though WAL used here by default, see above
+    wal_dir = workdir, -- though WAL not used here by default, see above.
     memtx_dir = workdir,
-    readahead = 10 * 1024 * 1024, -- to keep up with benchmark load
-    net_msg_max = 1024, -- to keep up with benchmark load
+    readahead = 10 * 1024 * 1024,
+    net_msg_max = 10 * 1024,
 }
 box.schema.user.grant('guest', 'super', nil, nil, { if_not_exists = true })
 

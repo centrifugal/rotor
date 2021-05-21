@@ -1,8 +1,8 @@
-local clock = require 'clock'
-local fiber = require 'fiber'
-local log = require 'log'
+local clock = require "clock"
+local fiber = require "fiber"
+local log = require "log"
 
-local indexpiration = require 'indexpiration'
+local indexpiration = require "indexpiration"
 
 --================================================================================
 -- Centrifuge Tarantool module, provides Broker and PresenceManager functionality.
@@ -34,92 +34,127 @@ local function on_disconnect()
 end
 
 centrifuge.init = function(opts)
-    if not opts then opts = {} end
-
-    rawset(_G, 'centrifuge', centrifuge)
-
-    if opts.is_master then
-        box.schema.create_space('pubs', {if_not_exists = true;})
-        box.space.pubs:format( {
-                {name = 'id';      type = 'unsigned'},
-                {name = 'channel'; type = 'string'},
-                {name = 'offset';  type = 'unsigned'},
-                {name = 'exp';     type = 'number'},
-                {name = 'data';    type = 'string'},
-                {name = 'info';    type = 'string'},
-        });
-        box.space.pubs:create_index('primary', {
-                                        parts = {{field='id', type='unsigned'}};
-                                        if_not_exists = true;
-        })
-        box.space.pubs:create_index('channel', {
-                                        parts = {{field='channel', type='string'}, {field='offset', type='unsigned'}};
-                                        if_not_exists = true;
-        })
-        box.space.pubs:create_index('exp', {
-                                        parts = {{field='exp', type='number'}, {field='id', type='unsigned'}};
-                                        if_not_exists = true;
-        })
-
-        box.schema.create_space('meta', {if_not_exists = true;})
-        box.space.meta:format({
-                {name = 'channel'; type = 'string'},
-                {name = 'offset';  type = 'unsigned'},
-                {name = 'epoch';   type = 'string'},
-                {name = 'exp';     type = 'number'},
-        })
-        box.space.meta:create_index('primary', {
-                                        parts = {{field='channel', type='string'}};
-                                        if_not_exists = true;
-        })
-        box.space.meta:create_index('exp', {
-                                        parts = {{field='exp', type='number'}, {field='channel', type='string'}};
-                                        if_not_exists = true;
-        })
-
-        box.schema.create_space('presence', {if_not_exists = true; temporary = true;})
-        box.space.presence:format({
-                {name = 'channel';   type = 'string'},
-                {name = 'client_id'; type = 'string'},
-                {name = 'user_id';   type = 'string'},
-                {name = 'conn_info'; type = 'string'},
-                {name = 'chan_info'; type = 'string'},
-                {name = 'exp';       type = 'number'},
-        })
-        box.space.presence:create_index('primary', {
-                                            parts = {{field='channel', type='string'}, {field='client_id', type='string'}};
-                                            if_not_exists = true;
-        })
-        box.space.presence:create_index('exp', {
-                                            parts = {{field='exp', type='number'}};
-                                            if_not_exists = true;
-        })
-
-        indexpiration(box.space.pubs, {
-                          field = 'exp';
-                          kind = 'time';
-                          precise = true;
-                          -- on_delete = function(t) end
-        })
-
-        indexpiration(box.space.meta, {
-                          field = 'exp';
-                          kind = 'time';
-                          precise = true;
-                          -- on_delete = function(t) end
-        })
-
-        indexpiration(box.space.presence, {
-                          field = 'exp';
-                          kind = 'time';
-                          precise = true;
-                          -- on_delete = function(t) end
-        })
+    if not opts then
+        opts = {}
     end
 
-    if not rawget(_G, '__centrifuge_cleanup_set') then
+    rawset(_G, "centrifuge", centrifuge)
+
+    if opts.is_master then
+        box.schema.create_space("pubs", {if_not_exists = true})
+        box.space.pubs:format(
+            {
+                {name = "id", type = "unsigned"},
+                {name = "channel", type = "string"},
+                {name = "offset", type = "unsigned"},
+                {name = "exp", type = "number"},
+                {name = "data", type = "string"},
+                {name = "info", type = "string"}
+            }
+        )
+        box.space.pubs:create_index(
+            "primary",
+            {
+                parts = {{field = "id", type = "unsigned"}},
+                if_not_exists = true
+            }
+        )
+        box.space.pubs:create_index(
+            "channel",
+            {
+                parts = {{field = "channel", type = "string"}, {field = "offset", type = "unsigned"}},
+                if_not_exists = true
+            }
+        )
+        box.space.pubs:create_index(
+            "exp",
+            {
+                parts = {{field = "exp", type = "number"}, {field = "id", type = "unsigned"}},
+                if_not_exists = true
+            }
+        )
+
+        box.schema.create_space("meta", {if_not_exists = true})
+        box.space.meta:format(
+            {
+                {name = "channel", type = "string"},
+                {name = "offset", type = "unsigned"},
+                {name = "epoch", type = "string"},
+                {name = "exp", type = "number"}
+            }
+        )
+        box.space.meta:create_index(
+            "primary",
+            {
+                parts = {{field = "channel", type = "string"}},
+                if_not_exists = true
+            }
+        )
+        box.space.meta:create_index(
+            "exp",
+            {
+                parts = {{field = "exp", type = "number"}, {field = "channel", type = "string"}},
+                if_not_exists = true
+            }
+        )
+
+        box.schema.create_space("presence", {if_not_exists = true, temporary = true})
+        box.space.presence:format(
+            {
+                {name = "channel", type = "string"},
+                {name = "client_id", type = "string"},
+                {name = "user_id", type = "string"},
+                {name = "conn_info", type = "string"},
+                {name = "chan_info", type = "string"},
+                {name = "exp", type = "number"}
+            }
+        )
+        box.space.presence:create_index(
+            "primary",
+            {
+                parts = {{field = "channel", type = "string"}, {field = "client_id", type = "string"}},
+                if_not_exists = true
+            }
+        )
+        box.space.presence:create_index(
+            "exp",
+            {
+                parts = {{field = "exp", type = "number"}},
+                if_not_exists = true
+            }
+        )
+
+        indexpiration(
+            box.space.pubs,
+            {
+                field = "exp",
+                kind = "time",
+                precise = true
+            }
+        )
+
+        indexpiration(
+            box.space.meta,
+            {
+                field = "exp",
+                kind = "time",
+                precise = true
+            }
+        )
+
+        indexpiration(
+            box.space.presence,
+            {
+                field = "exp",
+                kind = "time",
+                precise = true
+            }
+        )
+    end
+
+    if not rawget(_G, "__centrifuge_cleanup_set") then
         box.session.on_disconnect(on_disconnect)
-        rawset(_G, '__centrifuge_cleanup_set', true)
+        rawset(_G, "__centrifuge_cleanup_set", true)
     end
 end
 
@@ -147,7 +182,7 @@ function centrifuge.get_messages(id, use_polling, timeout)
         centrifuge.id_to_messages[id] = nil
         if messages then
             if use_polling then
-                -- write response
+                -- write all messages to connection and return.
                 return messages
             else
                 local ok = box.session.push(messages)
@@ -158,7 +193,7 @@ function centrifuge.get_messages(id, use_polling, timeout)
         else
             local left = (now + timeout) - fiber.time()
             if left <= 0 then
-                -- timed out, poller will call get_messages again.
+                -- timed out, client poller will call get_messages again.
                 return
             end
             centrifuge.id_to_fiber[id]:get(left)
@@ -209,7 +244,9 @@ local function wake_up_subscribers(channel)
 
     for k, _ in pairs(ids) do
         local chan = centrifuge.id_to_fiber[k]
-        if chan:has_readers() then chan:put(true, 0) end
+        if chan:has_readers() then
+            chan:put(true, 0)
+        end
     end
 end
 
@@ -233,12 +270,12 @@ function centrifuge._publish(msg_type, channel, data, info, ttl, size, meta_ttl)
         end
         -- Need to use field numbers to work with Tarantool 1.10, otherwise we could write:
         -- box.space.meta:upsert({channel, offset, epoch, meta_exp}, {{'=', 'channel', channel}, {'+', 'offset', 1}, {'=', 'exp', meta_exp}})
-        box.space.meta:upsert({channel, offset, epoch, meta_exp}, {{'=', 1, channel}, {'+', 2, 1}, {'=', 4, meta_exp}})
-        box.space.pubs:auto_increment{channel, offset, clock.realtime() + tonumber(ttl), data, info}
+        box.space.meta:upsert({channel, offset, epoch, meta_exp}, {{"=", 1, channel}, {"+", 2, 1}, {"=", 4, meta_exp}})
+        box.space.pubs:auto_increment {channel, offset, clock.realtime() + tonumber(ttl), data, info}
         local max_offset_to_keep = offset - size
         if max_offset_to_keep > 0 then
             for _, v in box.space.pubs.index.channel:pairs({channel, max_offset_to_keep}, {iterator = box.index.LE}) do
-                box.space.pubs:delete{v.id}
+                box.space.pubs:delete {v.id}
             end
         end
     end
@@ -247,13 +284,19 @@ function centrifuge._publish(msg_type, channel, data, info, ttl, size, meta_ttl)
     -- raise
     wake_up_subscribers(channel)
 
-    return {epoch=epoch, offset=offset}
+    return {epoch = epoch, offset = offset}
 end
 
 function centrifuge.publish(msg_type, channel, data, info, ttl, size, meta_ttl)
-    if not ttl then ttl = 0 end
-    if not size then size = 0 end
-    if not meta_ttl then meta_ttl = 0 end
+    if not ttl then
+        ttl = 0
+    end
+    if not size then
+        size = 0
+    end
+    if not meta_ttl then
+        meta_ttl = 0
+    end
 
     box.begin()
     local rc, res = pcall(centrifuge._publish, msg_type, channel, data, info, ttl, size, meta_ttl)
@@ -267,7 +310,9 @@ function centrifuge.publish(msg_type, channel, data, info, ttl, size, meta_ttl)
 end
 
 function centrifuge._history(channel, since_offset, limit, include_pubs, meta_ttl)
-    if not meta_ttl then meta_ttl = 0 end
+    if not meta_ttl then
+        meta_ttl = 0
+    end
 
     local meta_exp = 0
     local now = clock.realtime()
@@ -277,22 +322,24 @@ function centrifuge._history(channel, since_offset, limit, include_pubs, meta_tt
     local epoch = tostring(now)
     -- Need to use field numbers to work with Tarantool 1.10, otherwise we could write:
     -- box.space.meta:upsert({channel, 0, epoch, meta_exp}, {{'=', 'channel', channel}, {'=', 'exp', meta_exp}})
-    box.space.meta:upsert({channel, 0, epoch, meta_exp}, {{'=', 1, channel}, {'=', 4, meta_exp}})
+    box.space.meta:upsert({channel, 0, epoch, meta_exp}, {{"=", 1, channel}, {"=", 4, meta_exp}})
     local stream_meta = box.space.meta:get(channel)
 
     if not include_pubs then
-        return {stream_meta['offset'], stream_meta['epoch'], nil}
+        return {stream_meta["offset"], stream_meta["epoch"], nil}
     end
-    if stream_meta['offset'] == since_offset - 1 then
-        return {stream_meta['offset'], stream_meta['epoch'], nil}
+    if stream_meta["offset"] == since_offset - 1 then
+        return {stream_meta["offset"], stream_meta["epoch"], nil}
     end
     local num_entries = 0
-    local pubs = box.space.pubs.index.channel:pairs({channel, since_offset}, {iterator = box.index.GE})
-        :take_while(function(x)
-                num_entries = num_entries + 1
-                return x.channel == channel and (limit < 1 or num_entries < limit + 1)
-         end):totable()
-    return {stream_meta['offset'], stream_meta['epoch'], pubs}
+    local pubs =
+        box.space.pubs.index.channel:pairs({channel, since_offset}, {iterator = box.index.GE}):take_while(
+        function(x)
+            num_entries = num_entries + 1
+            return x.channel == channel and (limit < 1 or num_entries < limit + 1)
+        end
+    ):totable()
+    return {stream_meta["offset"], stream_meta["epoch"], pubs}
 end
 
 function centrifuge.history(channel, since_offset, limit, include_pubs, meta_ttl)
@@ -314,8 +361,8 @@ end
 function centrifuge.remove_history(channel)
     local batch_size = 10000
     box.begin()
-    for _, v in box.space.pubs.index.channel:pairs{channel} do
-        box.space.pubs:delete{v.id}
+    for _, v in box.space.pubs.index.channel:pairs {channel} do
+        box.space.pubs:delete {v.id}
 
         batch_size = batch_size - 1
         if batch_size <= 0 then
@@ -330,16 +377,22 @@ function centrifuge.remove_history(channel)
 end
 
 function centrifuge.add_presence(channel, ttl, client_id, user_id, conn_info, chan_info)
-    if not ttl then ttl = 0 end
-    if not conn_info then conn_info = "" end
-    if not chan_info then chan_info = "" end
+    if not ttl then
+        ttl = 0
+    end
+    if not conn_info then
+        conn_info = ""
+    end
+    if not chan_info then
+        chan_info = ""
+    end
 
     local exp = clock.realtime() + ttl
     box.space.presence:put({channel, client_id, user_id, conn_info, chan_info, exp})
 end
 
 function centrifuge.remove_presence(channel, client_id)
-    box.space.presence:delete{channel, client_id}
+    box.space.presence:delete {channel, client_id}
 end
 
 function centrifuge.presence(channel)
@@ -347,7 +400,7 @@ function centrifuge.presence(channel)
         error("No specified channel")
     end
 
-    return box.space.presence:select{channel}
+    return box.space.presence:select {channel}
 end
 
 function centrifuge.presence_stats(channel)
@@ -377,12 +430,12 @@ function centrifuge.apply_config(_, _) --(conf, opts)
 end
 
 function centrifuge.stop()
-    rawset(_G, 'centrifuge', nil)
+    rawset(_G, "centrifuge", nil)
 
     box.session.on_disconnect(on_disconnect, nil)
-    rawset(_G, '__centrifuge_cleanup_set', nil)
+    rawset(_G, "__centrifuge_cleanup_set", nil)
 end
 
-centrifuge.role_name="centrifuge"
+centrifuge.role_name = "centrifuge"
 
 return centrifuge
