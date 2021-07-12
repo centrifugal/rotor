@@ -55,6 +55,69 @@ function g.test_centrifuge()
     local cluster = g.cluster
     local server = cluster:server("storage1")
 
+    -- subscribe(id, channels)
+    local rc, err = server.net_box:call("centrifuge.subscribe", {1, {"hellochannel"}})
+    t.assert_equals(err, nil, err)
+
+    local rc, err = server.net_box:call("centrifuge.subscribe", {1, {"hellochannelasdfasdf"}})
+    t.assert_equals(err, nil, err)
+
+    local rc, err = server.net_box:call("centrifuge.get_messages", {1, true, 1})
+    t.assert_equals(err, nil, err)
+    t.assert_equals(rc, nil)
+
+    local offset, epoch, err =
+        server.net_box:call(
+        "centrifuge.publish",
+        {"msgtype", "hellochannel", "Data for message 1", "some info", 10, 10, 10}
+    )
+    t.assert_equals(err, nil, err)
+    t.assert_equals(offset, 1)
+    t.assert_not_equals(epoch, "")
+
+    local pubs, err = server.net_box:call("centrifuge.get_messages", {1, true, 1})
+    t.assert_equals(err, nil, err)
+    t.assert_equals(pubs[1][5], "Data for message 1")
+
+    local offset, epoch2, err =
+        server.net_box:call(
+        "centrifuge.publish",
+        {"msgtype", "hellochannel", "Data for message 2", "some info", 10, 10, 10}
+    )
+    t.assert_equals(err, nil, err)
+    t.assert_equals(offset, 2)
+    t.assert_equals(epoch, epoch2)
+
+    local offset, epoch, pubs, err = server.net_box:call("centrifuge.history", {"hellochannel", 0, 10, false, true, 10})
+    log.warn(offset)
+    log.warn(epoch)
+    log.warn(pubs)
+    t.assert_equals(err, nil, err)
+    t.assert_equals(offset, 2)
+    t.assert_not_equals(epoch, nil)
+    t.assert_not_equals(pubs, nil)
+    t.assert_equals(pubs[1][1] < pubs[2][1], true)
+
+    local offset, epoch, pubs, err = server.net_box:call("centrifuge.history", {"hellochannel", 0, 10, true, true, 10})
+    log.warn(offset)
+    log.warn(epoch)
+    log.warn(pubs)
+    t.assert_equals(err, nil, err)
+    t.assert_equals(offset, 2)
+    t.assert_not_equals(epoch, nil)
+    t.assert_not_equals(pubs, nil)
+    t.assert_equals(pubs[1][1] > pubs[2][1], true)
+
+    local rc, err = server.net_box:call("centrifuge.remove_history", {"hellochannel"})
+    t.assert_equals(rc, nil, rc)
+    t.assert_equals(err, nil, err)
+
+    local rc, err = server.net_box:call("centrifuge.unsubscribe", {1, {"hellochannel"}})
+    t.assert_equals(err, nil, err)
+
+    local rc, err = server.net_box:call("centrifuge.unsubscribe", {1, {"hellochannelasdfasdf"}})
+    t.assert_equals(err, nil, err)
+
     local rc, err =
         server.net_box:call(
         "centrifuge.add_presence",
@@ -70,78 +133,19 @@ function g.test_centrifuge()
     t.assert_equals(err, nil, err)
 
     local rc, err = server.net_box:call("centrifuge.presence", {"hellochannel"})
-    t.assert_not_equals(rc, nil, err)
     t.assert_equals(err, nil, err)
+    t.assert_equals(rc[1][1], "hellochannel")
+    t.assert_equals(rc[1][2], "clientid")
+    t.assert_equals(rc[1][3], "userid")
+    t.assert_equals(rc[1][4], "info")
+    t.assert_equals(rc[1][5], "chaninfo")
+    t.assert_equals(rc[1][6] > 0, true)
 
-    -- subscribe(id, channels)
-    local rc, err = server.net_box:call("centrifuge.subscribe", {1, {"hellochannel"}})
-    t.assert_equals(err, nil, err)
-
-    local rc, err = server.net_box:call("centrifuge.subscribe", {1, {"hellochannelasdfasdf"}})
-    t.assert_equals(err, nil, err)
-
-    local rc, tm =
-        t.assert_error(
-        server.net_box.call,
-        server.net_box,
-        "centrifuge.publish",
-        {"msgtype", "hellochannel", "Data for message", "some info", 10, 10, 10}
-    )
-
-    local rc, err = server.net_box:call("centrifuge.get_messages", {1, true, 1})
-    t.assert_equals(err, nil, err)
-
-    local rc, tm =
-        server.net_box:call(
-        "centrifuge.publish",
-        {"msgtype", "hellochannel", "Data for message", "some info", 10, 10, 10}
-    )
-    t.assert_not_equals(rc, nil)
-    t.assert_not_equals(tm, nil)
-
-    local rc, err = server.net_box:call("centrifuge.get_messages", {1, true, 1})
-    t.assert_not_equals(rc, nil, err)
-    t.assert_equals(err, nil, err)
-
-    local rc, tm =
-        server.net_box:call(
-        "centrifuge.publish",
-        {"msgtype", "hellochannel", "Data2 for message", "some info", 10, 10, 10}
-    )
-    t.assert_not_equals(rc, nil)
-    t.assert_not_equals(tm, nil)
-
-    local rc, tm = server.net_box:call("centrifuge.history", {"hellochannel", 0, 10, true, 10})
-    t.assert_not_equals(rc, nil, rc)
-    t.assert_not_equals(tm, nil, tm)
-
-    local rc, err = server.net_box:call("centrifuge.history", {"hellochannel", 0, 10, true, 10})
-    t.assert_not_equals(rc, nil, rc)
-    t.assert_not_equals(tm, nil, tm)
-
-    local rc, err = server.net_box:call("centrifuge.remove_history", {"hellochannel"})
-    t.assert_equals(rc, nil, rc)
-    t.assert_equals(err, nil, err)
-
-    local rc, err = server.net_box:call("centrifuge.unsubscribe", {1, {"hellochannel"}})
-    t.assert_equals(err, nil, err)
-
-    local rc, err = server.net_box:call("centrifuge.unsubscribe", {1, {"hellochannelasdfasdf"}})
-    t.assert_equals(err, nil, err)
-
-    local rc, err =
-        server.net_box:call(
-        "centrifuge.add_presence",
-        {"hellochannel", 10, "client id", "user id", "connection info", "channel info"}
-    )
+    local rc, err = server.net_box:call("centrifuge.remove_presence", {"hellochannel", "clientid"})
     t.assert_equals(rc, nil, rc)
     t.assert_equals(err, nil, err)
 
     local rc, err = server.net_box:call("centrifuge.presence", {"hellochannel"})
-    t.assert_not_equals(rc, nil, rc)
     t.assert_equals(err, nil, err)
-
-    local rc, err = server.net_box:call("centrifuge.remove_presence", {"hellochannel", "client id"})
-    t.assert_equals(rc, nil, rc)
-    t.assert_equals(err, nil, err)
+    t.assert_equals(rc, {})
 end

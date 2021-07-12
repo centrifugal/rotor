@@ -309,7 +309,7 @@ function centrifuge.publish(msg_type, channel, data, info, ttl, size, meta_ttl)
     return res.offset, res.epoch
 end
 
-function centrifuge._history(channel, since_offset, limit, include_pubs, meta_ttl)
+function centrifuge._history(channel, since_offset, limit, reverse, include_pubs, meta_ttl)
     if not meta_ttl then
         meta_ttl = 0
     end
@@ -328,12 +328,21 @@ function centrifuge._history(channel, since_offset, limit, include_pubs, meta_tt
     if not include_pubs then
         return {stream_meta["offset"], stream_meta["epoch"], nil}
     end
-    if stream_meta["offset"] == since_offset - 1 then
+    if reverse == false and stream_meta["offset"] == since_offset - 1 then
         return {stream_meta["offset"], stream_meta["epoch"], nil}
     end
     local num_entries = 0
+
+    local get_offset = since_offset
+    local iterator = box.index.GE
+    if reverse == true then
+        iterator = box.index.LE
+        if since_offset == 0 then
+            get_offset = stream_meta["offset"]
+        end
+    end
     local pubs =
-        box.space.pubs.index.channel:pairs({channel, since_offset}, {iterator = box.index.GE}):take_while(
+        box.space.pubs.index.channel:pairs({channel, get_offset}, {iterator = iterator}):take_while(
         function(x)
             num_entries = num_entries + 1
             return x.channel == channel and (limit < 1 or num_entries < limit + 1)
@@ -342,14 +351,14 @@ function centrifuge._history(channel, since_offset, limit, include_pubs, meta_tt
     return {stream_meta["offset"], stream_meta["epoch"], pubs}
 end
 
-function centrifuge.history(channel, since_offset, limit, include_pubs, meta_ttl)
+function centrifuge.history(channel, since_offset, limit, reverse, include_pubs, meta_ttl)
     if channel == nil then
         error("No channel specified")
     end
     box.begin()
-    local rc, res = pcall(centrifuge._history, channel, since_offset, limit, include_pubs, meta_ttl)
+    local rc, res = pcall(centrifuge._history, channel, since_offset, limit, reverse, include_pubs, meta_ttl)
     if not rc then
-        log.warn("History error %q %q %q %q %q", channel, since_offset, limit, include_pubs, meta_ttl)
+        log.warn("History error %q %q %q %q %q %q", channel, since_offset, limit, reverse, include_pubs, meta_ttl)
         box.rollback()
         error("History error: " .. tostring(res))
     end
