@@ -13,7 +13,7 @@ tarantoolctl rocks install https://raw.githubusercontent.com/moonlibs/indexpirat
 
 ## Pure Tarantool
 
-This section describes topologies available with pure Tarantool (i.e. no Cartridge). Use `init.lua` as starting point. As soon as Tarantool backend started you can connect to it from Centrifuge-based server (see below).
+This section describes topologies available with pure Tarantool (i.e. no Cartridge). Use `init_standalone.lua` as starting point. As soon as Tarantool backend started you can connect to it from Centrifuge-based server (see below).
 
 ### Single node
 
@@ -103,12 +103,9 @@ It's possible to combine sharded and high availability setups. For example start
   - Configure on fourth node
     - Join replicaset on first node
 
-# Start Centrifuge-based server
+# Start Centrifugo v3 server
 
-``` bash
-git clone  https://github.com/centrifugal/centrifuge.git
-cd centrifuge/_examples/custom_engine_tarantool
-```
+A beta release of Centrifugo v3 available [here](https://github.com/centrifugal/centrifugo/releases/tag/v3.0.0-beta.1)
 
 ## Pure Tarantool
 
@@ -116,8 +113,8 @@ This section describes how to connect Centrifuge-based server to pure Tarantool 
 
 ### Single node
 
-``` bash
-go run main.go
+```bash
+./centrifugo --engine=tarantool --tarantool_address="127.0.0.1:3301"
 ```
 
 ### Multinode
@@ -128,8 +125,8 @@ Not available for pure Tarantool yet.
 
 #### Sharded
 
-``` bash
-go run main.go -sharded
+```bash
+./centrifugo --engine=tarantool --tarantool_address="127.0.0.1:3301 127.0.0.1:3302"
 ```
 
 ## Cartridge
@@ -139,7 +136,7 @@ This section describes how to connect Centrifuge-based server to Tarantool Cartr
 ### Single node
 
 ``` bash
-go run main.go -user admin -password secret-cluster-cookie
+CENTRIFUGO_TARANTOOL_USER=admin CENTRIFUGO_TARANTOOL_PASSWORD="secret-cluster-cookie" ./centrifugo --engine=tarantool
 ```
 
 ### Multinode
@@ -147,13 +144,13 @@ go run main.go -user admin -password secret-cluster-cookie
 #### High Availability
 
 ``` bash
-go run main.go -ha -user admin -password secret-cluster-cookie
+CENTRIFUGO_TARANTOOL_USER=admin CENTRIFUGO_TARANTOOL_PASSWORD="secret-cluster-cookie" CENTRIFUGO_TARANTOOL_MODE="leader-follower" ./centrifugo --engine=tarantool --tarantool_address="127.0.0.1:3301,127.0.0.1:3302"
 ```
 
 #### Sharded
 
 ``` bash
-go run main.go -sharded -user admin -password secret-cluster-cookie
+CENTRIFUGO_TARANTOOL_USER=admin CENTRIFUGO_TARANTOOL_PASSWORD="secret-cluster-cookie" CENTRIFUGO_TARANTOOL_MODE="leader-follower" ./centrifugo --engine=tarantool --tarantool_address="127.0.0.1:3301,127.0.0.1:3302 127.0.0.1:3303,127.0.0.1:3304"
 ```
 
 # Tests
