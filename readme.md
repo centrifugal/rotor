@@ -1,6 +1,6 @@
 # Tarantool engine for Centrifugo
 
-This is a Lua part of Centrifugo integration with [Tarantool](https://www.tarantool.io/en/) database/platform as a possible Engine option. The integration should provide an efficient PUB/SUB, ephemeral streams and channel presence functionality. See [additional details](https://centrifugal.dev/docs/server/engines#tarantool-engine) in Centrifugo documentation.
+This is a Lua part of Centrifugo integration with [Tarantool](https://www.tarantool.io/en/) database/platform as a possible Engine option. The integration  provides an efficient PUB/SUB, ephemeral publication streams and channel presence functionality. See [additional details](https://centrifugal.dev/docs/server/engines#tarantool-engine) in Centrifugo documentation.
 
 At this stage we consider this module **experimental**: API and repo structure can still evolve as we get more feedback from the Centrifugo community.
 
