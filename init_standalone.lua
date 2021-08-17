@@ -48,9 +48,9 @@ box.schema.user.grant("guest", "super", nil, nil, {if_not_exists = true})
 
 local centrifuge = require "centrifuge"
 
-centrifuge.init({is_master = true})
+centrifuge.init_spaces({})
+centrifuge.start()
 
 if not fiber.self().storage.console then
-    require "console".start()
-    os.exit()
+    pcall(function() require'console'.start() os.exit() end)
 end

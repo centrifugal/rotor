@@ -10,7 +10,7 @@ Also install dependencies:
 
 ``` bash
 tarantoolctl rocks install cartridge 2.6.0
-tarantoolctl rocks install https://raw.githubusercontent.com/moonlibs/indexpiration/master/rockspecs/indexpiration-scm-1.rockspec
+tarantoolctl rocks install https://raw.githubusercontent.com/centrifugal/tarantool-centrifuge/main/centrifuge-scm-1.rockspec
 ```
 
 ## Pure Tarantool
