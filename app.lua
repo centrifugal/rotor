@@ -6,7 +6,8 @@ local json = require "json".new()
 local centrifuge = require "centrifuge"
 
 --================================================================================
--- Centrifuge Tarantool module, provides Broker and PresenceManager functionality.
+-- Centrifuge Tarantool Engine, provides PUB/SUB broker, ephemeral history streams
+-- and channel presence functionality.
 --================================================================================
 
 local app = {}
