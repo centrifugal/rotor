@@ -30,13 +30,11 @@ local cartridge = require("cartridge")
 local argparse = require("cartridge.argparse")
 local membership = require("membership")
 
--- Configure and run Cartridge on node.
 local _, err =
     cartridge.cfg(
     {
-        workdir = "tmp/",
         roles = {
-            "centrifuge"
+            "app"
         }
     }
 )
@@ -61,7 +59,7 @@ if opts.bootstrap then
     log.info("Bootstrapping in %s", workdir)
     require("membership.options").ACK_TIMEOUT_SECONDS = 0.5
     local all = {
-        ["centrifuge"] = true
+        ["app"] = true
     }
 
     local _, err =
