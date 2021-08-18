@@ -34,7 +34,7 @@ local _, err =
     cartridge.cfg(
     {
         roles = {
-            "centrifuge"
+            "app"
         }
     }
 )
@@ -59,7 +59,7 @@ if opts.bootstrap then
     log.info("Bootstrapping in %s", workdir)
     require("membership.options").ACK_TIMEOUT_SECONDS = 0.5
     local all = {
-        ["centrifuge"] = true
+        ["app"] = true
     }
 
     local _, err =
