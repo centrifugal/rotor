@@ -1,8 +1,12 @@
-# Tarantool engine for Centrifugo based on Tarantool Cartridge
+# Tarantool Cartridge engine for Centrifugo
 
-This is a Lua part of Centrifugo integration with [Tarantool](https://www.tarantool.io/en/) database/platform as a possible Engine option. The integration  provides an efficient PUB/SUB, ephemeral publication streams and channel presence functionality. See [additional details](https://centrifugal.dev/docs/server/engines#tarantool-engine) in Centrifugo documentation.
+This is a Lua part of [Centrifugo integration](https://centrifugal.dev/docs/server/engines#tarantool-engine) with [Tarantool](https://www.tarantool.io/en/) as a possible Engine option. 
+
+The integration provides an efficient PUB/SUB, ephemeral history streams and channel presence functionality.
 
 This repo is an engine built with Tarantool Cartridge framework. For other possible Tarantool setups (without Cartridge) refer to the [tarantool-centrifuge](https://github.com/centrifugal/tarantool-centrifuge) repo.
+
+## Status
 
 At this stage we consider this **experimental**: API and repo structure can still evolve as we get more feedback from the Centrifugo community.
 
@@ -10,7 +14,7 @@ At this stage we consider this **experimental**: API and repo structure can stil
 
 Prerequisites: Go language and Tarantool should be installed.
 
-Also install dependencies:
+Also, install dependencies:
 
 ``` bash
 tarantoolctl rocks install cartridge 2.6.0
@@ -23,6 +27,28 @@ Then run:
 cartridge start
 ```
 
+This will run Cartridge with 2 nodes from `instances.yml`, you can then go to http://localhost:8081 and configure topology.
+
+Alternatively, you can run single node Tarantool with already configured `centrifuge` role using this command:
+
+``` bash
+tarantool init.lua --bootstrap true
+```
+
+`--bootstrap true` automatically assigns `centrifuge` role for node on `127.0.0.1:3301`
+
+Two manually run several Cartridge nodes run in one terminal:
+
+```bash
+tarantool init.lua --advertise-uri 127.0.0.1:3301 --workdir one
+```
+
+And then in another terminal:
+
+```bash
+tarantool init.lua --advertise-uri 127.0.0.1:3302 --http-enabled false --workdir two
+```
+
 ## Centrifugo server version
 
 These examples require Centrifugo >= 3.0.0
@@ -31,35 +57,9 @@ A beta release of Centrifugo v3 available [here](https://github.com/centrifugal/
 
 ## Topologies
 
-This section describes topologies available with Tarantool Cartridge. Use `init.lua` as starting point.
+This section describes topologies available with Tarantool Cartridge.
 
-### Single node
-
-``` bash
-tarantool init.lua --bootstrap true
-```
-
-`--bootstrap true` automatically assigns Centrifuge role for node on `127.0.0.1:3301`
-
-### Multinode
-
-Create a couple of Tarantool instances managed by Cartridge:
-
-First instance on `127.0.0.1:3301`:
-
-```bash
-tarantool init.lua --advertise-uri 127.0.0.1:3301 --workdir one
-```
-
-Second instance on `127.0.0.1:3302`:
-
-```bash
-tarantool init.lua --advertise-uri 127.0.0.1:3302 --http-enabled false --workdir two
-```
-
-Now let's look at available Tarantool topologies in Cartridge cluster.
-
-#### High availability
+### High availability (leader-follower setup)
 
 - Configure topology on web ui http://127.0.0.1:8081
   - Configure on first node
@@ -84,7 +84,7 @@ Then run Centrifugo with config like:
 }
 ```
 
-#### Sharded
+### Sharded (to scale engine)
 
 - Configure topology on web ui http://127.0.0.1:8081
   - Configure on first node
@@ -107,7 +107,9 @@ Then run Centrifugo with config like:
 }
 ```
 
-#### Combined (Sharded + Highly Available)
+Centrifugo will consistently shard data by channel between running Tarantool nodes. 
+
+### Combined (Sharded + Highly Available)
 
 It's possible to combine sharded and high availability setups. For example start 4 Tarantool nodes in Cartridge, create 2 shards, join replicas to each shard. I.e. sth like this:
 
@@ -138,7 +140,7 @@ Then run Centrifugo with config like:
 }
 ```
 
-# Tests
+## Tests
 
 ``` bash
 tarantoolctl rocks install luatest
@@ -150,17 +152,17 @@ tarantoolctl rocks install luatest
 .rocks/bin/luatest
 ```
 
-# Deploy
+## Deploy
 
 See [releases](https://github.com/centrifugal/tarantool-engine-cartridge/releases) for assets.
 
-## Install
+### Install
 
 ```
 sudo yum install centrifuge-tarantool-engine-$RELEASE.rpm
 ```
 
-## Configuring
+### Configuring
 
 - `/etc/tarantool/conf.d/centrifuge-tarantool-engine.yml`
   ```
@@ -173,7 +175,7 @@ sudo yum install centrifuge-tarantool-engine-$RELEASE.rpm
     advertise_uri: 127.0.0.1:3302
   ```
 
-## Start
+### Start
 
 ```
 sudo systemctl start centrifuge-tarantool-engine@x
@@ -186,7 +188,7 @@ sudo systemctl start centrifuge-tarantool-engine@y
 - Goto web admin
 - Configure topology you want
 
-## Manual packing
+### Manual packing
 
 ```
 sudo yum install tarantool tarantool-devel cartridge-cli

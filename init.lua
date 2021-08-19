@@ -59,7 +59,7 @@ if opts.bootstrap then
     log.info("Bootstrapping in %s", workdir)
     require("membership.options").ACK_TIMEOUT_SECONDS = 0.5
     local all = {
-        ["app"] = true
+        ["centrifuge"] = true
     }
 
     local _, err =
