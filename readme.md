@@ -23,13 +23,13 @@ Then run:
 cartridge start
 ```
 
-# Centrifugo server version
+## Centrifugo server version
 
 These examples require Centrifugo >= 3.0.0
 
 A beta release of Centrifugo v3 available [here](https://github.com/centrifugal/centrifugo/releases/tag/v3.0.0-beta.1)
 
-## Topoligies
+## Topologies
 
 This section describes topologies available with Tarantool Cartridge. Use `init.lua` as starting point.
 
