@@ -1,21 +1,21 @@
 [Unit]
-Description=Tarantool Cartridge engine for Centrifugo/Centrifuge trance@%i
+Description=Tarantool Cartridge engine for Centrifugo/Centrifuge rotor@%i
 After=network.target
 
 [Service]
 Type=simple
-ExecStartPre=/bin/sh -c 'mkdir -p /var/lib/tarantool/trance.%i'
-ExecStart=/usr/bin/tarantool /usr/share/tarantool/trance/init.lua
+ExecStartPre=/bin/sh -c 'mkdir -p /var/lib/tarantool/rotor.%i'
+ExecStart=/usr/bin/tarantool /usr/share/tarantool/rotor/init.lua
 Restart=on-failure
 RestartSec=2
 User=tarantool
 Group=tarantool
 
-Environment=TARANTOOL_APP_NAME=trance
-Environment=TARANTOOL_WORKDIR=/var/lib/tarantool/trance.%i
+Environment=TARANTOOL_APP_NAME=rotor
+Environment=TARANTOOL_WORKDIR=/var/lib/tarantool/rotor.%i
 Environment=TARANTOOL_CFG=/etc/tarantool/conf.d
-Environment=TARANTOOL_PID_FILE=/var/run/tarantool/trance.%i.pid
-Environment=TARANTOOL_CONSOLE_SOCK=/var/run/tarantool/trance.%i.control
+Environment=TARANTOOL_PID_FILE=/var/run/tarantool/rotor.%i.pid
+Environment=TARANTOOL_CONSOLE_SOCK=/var/run/tarantool/rotor.%i.control
 Environment=TARANTOOL_INSTANCE_NAME=%i
 
 LimitCORE=infinity
@@ -31,4 +31,4 @@ TimeoutStopSec=10s
 
 [Install]
 WantedBy=multi-user.target
-Alias=trance.%i
+Alias=rotor.%i

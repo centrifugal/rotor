@@ -19,7 +19,7 @@ g.before_all(
                 use_vshard = false,
                 replicasets = {
                     {
-                        roles = {"trance"},
+                        roles = {"rotor"},
                         servers = {
                             {
                                 alias = "storage1"
@@ -27,7 +27,7 @@ g.before_all(
                         }
                     },
                     {
-                        roles = {"trance"},
+                        roles = {"rotor"},
                         servers = {
                             {
                                 alias = "storage2"

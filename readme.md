@@ -1,4 +1,4 @@
-# Trance – Experimental Tarantool Cartridge engine for Centrifugo
+# Rotor – Experimental Tarantool Cartridge engine for Centrifugo
 
 This is a Lua part of [Centrifugo integration](https://centrifugal.dev/docs/server/engines#tarantool-engine) with [Tarantool](https://www.tarantool.io/en/) as a possible Engine option. 
 
@@ -152,23 +152,23 @@ tarantoolctl rocks install luatest
 
 ## Deploy
 
-See [releases](https://github.com/centrifugal/trance/releases) for assets.
+See [releases](https://github.com/centrifugal/rotor/releases) for assets.
 
 ### Install
 
 ```
-sudo yum install trance-$RELEASE.rpm
+sudo yum install rotor-$RELEASE.rpm
 ```
 
 ### Configuring
 
-- `/etc/tarantool/conf.d/trance.yml`
+- `/etc/tarantool/conf.d/rotor.yml`
   ```
-  trance.x:
+  rotor.x:
     http_port: 8081
     advertise_uri: 127.0.0.1:3301
 
-  trance.y:
+  rotor.y:
     http_port: 8082
     advertise_uri: 127.0.0.1:3302
   ```
@@ -176,11 +176,11 @@ sudo yum install trance-$RELEASE.rpm
 ### Start
 
 ```
-sudo systemctl start trance@x
+sudo systemctl start rotor@x
 ```
 
 ```
-sudo systemctl start trance@y
+sudo systemctl start rotor@y
 ```
 
 - Goto web admin
@@ -198,5 +198,5 @@ cartridge build
 ```
 
 ```
-cartridge pack rpm --unit-template trance.service --instantiated-unit-template trance@.service # --version 0.1.0
+cartridge pack rpm --unit-template rotor.service --instantiated-unit-template rotor@.service # --version 0.1.0
 ```

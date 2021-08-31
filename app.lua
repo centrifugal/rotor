@@ -6,7 +6,7 @@ local json = require "json".new()
 local centrifuge = require "centrifuge"
 
 --=======================================================================================
--- Trance: Tarantool Engine for Centrifugo/Centrifuge based on Tarantool Cartridge.
+-- Rotor: Tarantool Engine for Centrifugo/Centrifuge based on Tarantool Cartridge.
 -- Provides PUB/SUB broker, ephemeral history streams and channel presence functionality.
 --=======================================================================================
 
@@ -36,6 +36,6 @@ function app.apply_config(_, _) --(conf, opts)
     return true
 end
 
-app.role_name = "trance"
+app.role_name = "rotor"
 
 return app

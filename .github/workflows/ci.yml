@@ -108,8 +108,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ needs.create_release.outputs.upload_url }}
-          asset_path: trance-${{ env.RELEASE_VERSION }}-0.deb
-          asset_name: trance-tnt${{ matrix.tarantool-version }}-${{ env.RELEASE_VERSION }}-0.deb
+          asset_path: rotor-${{ env.RELEASE_VERSION }}-0.deb
+          asset_name: rotor-tnt${{ matrix.tarantool-version }}-${{ env.RELEASE_VERSION }}-0.deb
           asset_content_type: application/octet-stream
 
       - name: Upload rpm
@@ -118,6 +118,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ needs.create_release.outputs.upload_url }}
-          asset_path: trance-${{ env.RELEASE_VERSION }}-0.rpm
-          asset_name: trance-tnt${{ matrix.tarantool-version }}-${{ env.RELEASE_VERSION }}-0.rpm
+          asset_path: rotor-${{ env.RELEASE_VERSION }}-0.rpm
+          asset_name: rotor-tnt${{ matrix.tarantool-version }}-${{ env.RELEASE_VERSION }}-0.rpm
           asset_content_type: application/octet-stream

@@ -1,7 +1,7 @@
-package = "trance"
+package = "rotor"
 version = "scm-1"
 source = {
-   url = "https://github.com/centrifugal/trance"
+   url = "https://github.com/centrifugal/rotor"
 }
 description = {
    summary = "Centrifugo/Centrifuge Tarantool Engine for Tarantool Cartridge",

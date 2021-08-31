@@ -1,12 +1,12 @@
-trance:
+rotor:
   cluster_cookie: make_me_secret
 
-trance.01:
+rotor.01:
   advertise_uri: localhost:3301
   http_port: 8081
   memtx_memory: 536870912
 
-trance.02:
+rotor.02:
   advertise_uri: localhost:3302
   http_port: 8082
   memtx_memory: 536870912
