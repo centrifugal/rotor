@@ -1,4 +1,4 @@
-# Tarantool Cartridge engine for Centrifugo
+# Rotor – Experimental Tarantool Cartridge engine for Centrifugo
 
 This is a Lua part of [Centrifugo integration](https://centrifugal.dev/docs/server/engines#tarantool-engine) with [Tarantool](https://www.tarantool.io/en/) as a possible Engine option. 
 
@@ -17,7 +17,7 @@ Prerequisites: Go language and Tarantool should be installed.
 Also, install dependencies:
 
 ``` bash
-tarantoolctl rocks install cartridge 2.6.0
+tarantoolctl rocks install cartridge 2.7.1
 tarantoolctl rocks install https://raw.githubusercontent.com/centrifugal/tarantool-centrifuge/main/centrifuge-scm-1.rockspec
 ```
 
@@ -52,8 +52,6 @@ tarantool init.lua --advertise-uri 127.0.0.1:3302 --http-enabled false --workdir
 ## Centrifugo server version
 
 These examples require Centrifugo >= 3.0.0
-
-A beta release of Centrifugo v3 available [here](https://github.com/centrifugal/centrifugo/releases/tag/v3.0.0-beta.1)
 
 ## Topologies
 
@@ -154,23 +152,23 @@ tarantoolctl rocks install luatest
 
 ## Deploy
 
-See [releases](https://github.com/centrifugal/tarantool-engine-cartridge/releases) for assets.
+See [releases](https://github.com/centrifugal/rotor/releases) for assets.
 
 ### Install
 
 ```
-sudo yum install centrifuge-tarantool-engine-$RELEASE.rpm
+sudo yum install rotor-$RELEASE.rpm
 ```
 
 ### Configuring
 
-- `/etc/tarantool/conf.d/centrifuge-tarantool-engine.yml`
+- `/etc/tarantool/conf.d/rotor.yml`
   ```
-  centrifuge-tarantool-engine.x:
+  rotor.x:
     http_port: 8081
     advertise_uri: 127.0.0.1:3301
 
-  centrifuge-tarantool-engine.y:
+  rotor.y:
     http_port: 8082
     advertise_uri: 127.0.0.1:3302
   ```
@@ -178,11 +176,11 @@ sudo yum install centrifuge-tarantool-engine-$RELEASE.rpm
 ### Start
 
 ```
-sudo systemctl start centrifuge-tarantool-engine@x
+sudo systemctl start rotor@x
 ```
 
 ```
-sudo systemctl start centrifuge-tarantool-engine@y
+sudo systemctl start rotor@y
 ```
 
 - Goto web admin
@@ -200,5 +198,5 @@ cartridge build
 ```
 
 ```
-cartridge pack rpm --unit-template centrifuge-tarantool-engine.service --instantiated-unit-template centrifuge-tarantool-engine@.service # --version 0.1.0
+cartridge pack rpm --unit-template rotor.service --instantiated-unit-template rotor@.service # --version 0.1.0
 ```
