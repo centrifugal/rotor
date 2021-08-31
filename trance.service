@@ -1,0 +1,33 @@
+[Unit]
+Description=Tarantool Cartridge engine for Centrifugo/Centrifuge trance.default
+After=network.target
+
+[Service]
+Type=simple
+ExecStartPre=/bin/sh -c 'mkdir -p /var/lib/tarantool/trance.default'
+ExecStart=/usr/bin/tarantool /usr/share/tarantool/trance/init.lua
+Restart=on-failure
+RestartSec=2
+User=tarantool
+Group=tarantool
+
+Environment=TARANTOOL_APP_NAME=trance
+Environment=TARANTOOL_WORKDIR=/var/lib/tarantool/trance.default
+Environment=TARANTOOL_CFG=/etc/tarantool/conf.d
+Environment=TARANTOOL_PID_FILE=/var/run/tarantool/trance.default.pid
+Environment=TARANTOOL_CONSOLE_SOCK=/var/run/tarantool/trance.default.control
+
+LimitCORE=infinity
+# Disable OOM killer
+OOMScoreAdjust=-1000
+# Increase fd limit for Vinyl
+LimitNOFILE=65535
+
+# Systemd waits until all xlogs are recovered
+TimeoutStartSec=86400s
+# Give a reasonable amount of time to close xlogs
+TimeoutStopSec=10s
+
+[Install]
+WantedBy=multi-user.target
+Alias=trance

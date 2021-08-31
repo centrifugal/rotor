@@ -9,7 +9,7 @@ jobs:
     if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name != github.repository
     strategy:
       matrix:
-        tarantool-version: ["1.10", "2.6", "2.7"]
+        tarantool-version: ["1.10", "2.8"]
       fail-fast: false
     runs-on: [ubuntu-latest]
     steps:
@@ -35,7 +35,7 @@ jobs:
     runs-on: [ubuntu-latest]
     strategy:
       matrix:
-        tarantool-version: ["2.6", "2.7"]
+        tarantool-version: ["2.8"]
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -81,7 +81,7 @@ jobs:
     runs-on: [ubuntu-latest]
     strategy:
       matrix:
-        tarantool-version: ["2.6", "2.7"]
+        tarantool-version: ["2.8.2"]
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -108,8 +108,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ needs.create_release.outputs.upload_url }}
-          asset_path: centrifuge-tarantool-engine-${{ env.RELEASE_VERSION }}-0.deb
-          asset_name: centrifuge-tarantool-engine-tnt${{ matrix.tarantool-version }}-${{ env.RELEASE_VERSION }}-0.deb
+          asset_path: trance-${{ env.RELEASE_VERSION }}-0.deb
+          asset_name: trance-tnt${{ matrix.tarantool-version }}-${{ env.RELEASE_VERSION }}-0.deb
           asset_content_type: application/octet-stream
 
       - name: Upload rpm
@@ -118,6 +118,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ needs.create_release.outputs.upload_url }}
-          asset_path: centrifuge-tarantool-engine-${{ env.RELEASE_VERSION }}-0.rpm
-          asset_name: centrifuge-tarantool-engine-tnt${{ matrix.tarantool-version }}-${{ env.RELEASE_VERSION }}-0.rpm
+          asset_path: trance-${{ env.RELEASE_VERSION }}-0.rpm
+          asset_name: trance-tnt${{ matrix.tarantool-version }}-${{ env.RELEASE_VERSION }}-0.rpm
           asset_content_type: application/octet-stream

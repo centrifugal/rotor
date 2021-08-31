@@ -1,12 +1,12 @@
-centrifuge-tarantool-engine:
+trance:
   cluster_cookie: make_me_secret
 
-centrifuge-tarantool-engine.shard01-1:
+trance.01:
   advertise_uri: localhost:3301
   http_port: 8081
   memtx_memory: 536870912
 
-centrifuge-tarantool-engine.shard01-2:
+trance.02:
   advertise_uri: localhost:3302
   http_port: 8082
   memtx_memory: 536870912
