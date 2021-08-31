@@ -1,6 +1,6 @@
-# Rotor – Experimental Tarantool Cartridge engine for Centrifugo
+# Rotor – Tarantool Cartridge engine for Centrifugo
 
-This is a Lua part of [Centrifugo integration](https://centrifugal.dev/docs/server/engines#tarantool-engine) with [Tarantool](https://www.tarantool.io/en/) as a possible Engine option. 
+This is a Lua part of [Centrifugo experimental integration](https://centrifugal.dev/docs/server/engines#tarantool-engine) with [Tarantool](https://www.tarantool.io/en/) as a possible Engine option. 
 
 The integration provides an efficient PUB/SUB, ephemeral history streams and channel presence functionality.
 
