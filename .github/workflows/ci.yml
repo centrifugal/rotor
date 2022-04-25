@@ -108,8 +108,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ needs.create_release.outputs.upload_url }}
-          asset_path: rotor-${{ env.RELEASE_VERSION }}-1_all.deb
-          asset_name: rotor-tnt${{ matrix.tarantool-version }}-${{ env.RELEASE_VERSION }}-1_all.deb
+          asset_path: rotor_${{ env.RELEASE_VERSION }}-1_all.deb
+          asset_name: rotor_${{ env.RELEASE_VERSION }}-1_all.deb
           asset_content_type: application/octet-stream
 
       - name: Upload rpm
@@ -119,5 +119,5 @@ jobs:
         with:
           upload_url: ${{ needs.create_release.outputs.upload_url }}
           asset_path: rotor-${{ env.RELEASE_VERSION }}-1.x86_64.rpm
-          asset_name: rotor-tnt${{ matrix.tarantool-version }}-${{ env.RELEASE_VERSION }}-1.x86_64.rpm
+          asset_name: rotor-${{ env.RELEASE_VERSION }}-1.x86_64.rpm
           asset_content_type: application/octet-stream
