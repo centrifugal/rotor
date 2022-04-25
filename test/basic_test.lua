@@ -69,7 +69,7 @@ function g.test_centrifuge()
     local offset, epoch, err =
         server.net_box:call(
         "centrifuge.publish",
-        {"msgtype", "hellochannel", "Data for message 1", "some info", 10, 10, 10}
+        {"msgtype", "hellochannel", "Data for message 1", 10, 10, 10}
     )
     t.assert_equals(err, nil, err)
     t.assert_equals(offset, 1)
@@ -82,7 +82,7 @@ function g.test_centrifuge()
     local offset, epoch2, err =
         server.net_box:call(
         "centrifuge.publish",
-        {"msgtype", "hellochannel", "Data for message 2", "some info", 10, 10, 10}
+        {"msgtype", "hellochannel", "Data for message 2", 10, 10, 10}
     )
     t.assert_equals(err, nil, err)
     t.assert_equals(offset, 2)
@@ -126,8 +126,7 @@ function g.test_centrifuge()
             160,
             "clientid",
             "userid",
-            "info",
-            "chaninfo"
+            "data",
         }
     )
     t.assert_equals(err, nil, err)
@@ -137,9 +136,8 @@ function g.test_centrifuge()
     t.assert_equals(rc[1][1], "hellochannel")
     t.assert_equals(rc[1][2], "clientid")
     t.assert_equals(rc[1][3], "userid")
-    t.assert_equals(rc[1][4], "info")
-    t.assert_equals(rc[1][5], "chaninfo")
-    t.assert_equals(rc[1][6] > 0, true)
+    t.assert_equals(rc[1][4], "data")
+    t.assert_equals(rc[1][5] > 0, true)
 
     local rc, err = server.net_box:call("centrifuge.remove_presence", {"hellochannel", "clientid"})
     t.assert_equals(rc, nil, rc)
